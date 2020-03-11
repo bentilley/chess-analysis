@@ -1,0 +1,64 @@
+$font-stack: Arial, Helvetica, sans-serif;
+$primary-color: #333;
+
+.App {
+  margin: 1rem;
+  font-family: $font-stack;
+  color: $primary-color;
+}
+
+$col-black: #D18B47;
+$col-white: #BFAC87;
+
+.chessboard {
+  width: 100%;
+  .chessboard__row {
+    display: flex;
+    .chessboard__cell {
+      width: 12.5%;
+      display: flex;
+    }
+
+    .chessboard__cell:before {
+      content: "";
+      float: left;
+      padding-top: 100%;
+    }
+  }
+
+  .chessboard__piece {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+    svg {
+      width: 62%;
+      height: auto;
+    }
+
+    &--black {
+      svg {
+        fill: #222;
+      }
+    }
+    &--white {
+      svg {
+        fill: #DDD;
+      }
+    }
+
+    &--smaller {
+      svg {
+        width: 50%;
+      }
+    }
+  }
+
+  &--black {
+    background-color: $col-black;
+  }
+
+  &--white {
+    background-color: $col-white;
+  }
+}
