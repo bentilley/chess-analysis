@@ -9,7 +9,9 @@ const Perspectives = Object.freeze({
 
 export default class Board {
   constructor({ board: boardData, perspective }) {
-    this.cells = boardData.map((cellData, index) => new Cell(this, cellData));
+    this.cells = Object.values(boardData).map(
+      (cellData, index) => new Cell(this, cellData)
+    );
     this.perspective = perspective;
     this.isLegal = this.isLegal.bind(this);
     this.hasFriendlyPiece = this.hasFriendlyPiece.bind(this);
@@ -188,6 +190,13 @@ class Piece {
 class Pawn extends Piece {
   constructor(pieceData) {
     super(pieceData);
+  }
+
+  get hasMoved() {
+    return {
+      [Colours.White]: this.position.row !== 2,
+      [Colours.Black]: this.position.row !== 7,
+    }[this.colour];
   }
 
   get direction() {

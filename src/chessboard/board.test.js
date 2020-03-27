@@ -11,7 +11,7 @@ describe("Board", () => {
       ]);
       let board = new Board({ board: boardData });
       let piece = board.getCell({ row: 1, col: 2 }).piece;
-      piece.hasMoved = false;
+      Object.defineProperty(piece, "hasMoved", { get: () => false });
       expect(piece.legalMoves.map(String).sort()).toEqual(
         legalMoves.map(String).sort()
       );
@@ -24,7 +24,7 @@ describe("Board", () => {
       ]);
       let board = new Board({ board: boardData });
       let piece = board.getCell({ row: 1, col: 2 }).piece;
-      piece.hasMoved = true;
+      Object.defineProperty(piece, "hasMoved", { get: () => true });
       expect(piece.legalMoves.map(String).sort()).toEqual(
         legalMoves.map(String).sort()
       );
@@ -37,7 +37,7 @@ describe("Board", () => {
       ]);
       let board = new Board({ board: boardData });
       let piece = board.getCell({ row: 1, col: 2 }).piece;
-      piece.hasMoved = true;
+      Object.defineProperty(piece, "hasMoved", { get: () => true });
       expect(piece.legalMoves.map(String).sort()).toEqual(
         legalMoves.map(String).sort()
       );
@@ -296,7 +296,7 @@ function getTestData(boardShortHand) {
 }
 
 function compileBoardData(boardShortHand) {
-  return boardShortHand
+  let cellArray = boardShortHand
     .map((row, row_index) =>
       row.map((cell, col_index) => ({
         row: boardShortHand.length - row_index,
@@ -308,6 +308,11 @@ function compileBoardData(boardShortHand) {
       }))
     )
     .flat();
+  const boardData = {};
+  cellArray.forEach(cell => {
+    boardData[`(${cell.col},${cell.row})`] = cell;
+  });
+  return boardData;
 }
 
 function compileLegalMoves(boardShortHand) {
