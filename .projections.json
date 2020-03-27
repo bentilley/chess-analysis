@@ -1,0 +1,13 @@
+{
+  "*.js": {
+    "console": "node"
+  },
+  "src/chessboard/*.js": {
+    "type": "chessboard",
+    "alternate": ["src/chessboard/{}.test.js"]
+  },
+  "src/chessboard/*.test.js": {
+    "type": "chessboardtest",
+    "alternate": ["src/chessboard/{}.js"]
+  }
+}
