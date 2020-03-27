@@ -17,6 +17,7 @@ $col-white: #BFAC87;
     .chessboard__cell {
       width: 12.5%;
       display: flex;
+      position: relative;
     }
 
     .chessboard__cell:before {
@@ -54,11 +55,33 @@ $col-white: #BFAC87;
     }
   }
 
+  .chessboard__cell_status {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+
   &--black {
     background-color: $col-black;
   }
 
   &--white {
     background-color: $col-white;
+  }
+
+  &--attacked-0 {
+    background-color: none;
+  }
+
+  @for $i from 1 through 8 {
+    &--white-attacked-#{$i} {
+      background-color: rgba(0, 0, 255, 0.2 * $i);
+    }
+  }
+
+  @for $i from 1 through 8 {
+    &--black-attacked-#{$i} {
+      background-color: rgba(0, 255, 0, 0.2 * $i);
+    }
   }
 }

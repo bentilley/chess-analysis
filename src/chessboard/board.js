@@ -79,6 +79,38 @@ export default class Board {
     );
   }
 
+  getCellsByQuery(query) {
+    return this.cells.filter(query);
+  }
+
+  getAllCellAttackedCounts() {
+    const whitePieceCells = this.getCellsByQuery(
+      cell => cell.hasPiece && cell.piece.colour === Colours.White
+    );
+    const blackPieceCells = this.getCellsByQuery(
+      cell => cell.hasPiece && cell.piece.colour === Colours.Black
+    );
+    return {
+      whiteAttacking: Board.getCellAttackedCounts(whitePieceCells),
+      blackAttacking: Board.getCellAttackedCounts(blackPieceCells),
+    };
+  }
+
+  static getCellAttackedCounts(cellsWithPieces) {
+    const allLegalMoves = cellsWithPieces
+      .map(cell => cell.piece.attackingPositions)
+      .flat();
+    const attackedCounts = {};
+    allLegalMoves.forEach(position => {
+      if (attackedCounts[position.toString()]) {
+        attackedCounts[position.toString()]++;
+      } else {
+        attackedCounts[position.toString()] = 1;
+      }
+    });
+    return attackedCounts;
+  }
+
   map(f) {
     return this.rows.map(f);
   }
@@ -91,7 +123,7 @@ class Slice {
   }
 
   toString() {
-    return "" + this.index;
+    return String(this.index);
   }
 
   map(f) {
@@ -101,7 +133,6 @@ class Slice {
 
 class Cell {
   constructor(board, { row, col, rank, colour, piece }) {
-    // this.board = board;
     this.row = row;
     this.col = col;
     this.position = new Position(col, row);
@@ -182,6 +213,10 @@ class Piece {
     return moves;
   }
 
+  get attackingPositions() {
+    return this.legalMoves;
+  }
+
   get legalMoves() {
     return [];
   }
@@ -211,14 +246,18 @@ class Pawn extends Piece {
     return moves;
   }
 
-  get takingMoves() {
+  get attackingPositions() {
     const moves = [
       this.position.moveBy({ up: this.direction, right: 1 }),
       this.position.moveBy({ up: this.direction, right: -1 }),
     ];
-    return moves
-      .filter(this.board.isLegal)
-      .filter(position => this.board.hasEnemyPiece(position, this.colour));
+    return moves.filter(this.board.isLegal);
+  }
+
+  get takingMoves() {
+    return this.attackingPositions.filter(position =>
+      this.board.hasEnemyPiece(position, this.colour)
+    );
   }
 
   get legalMoves() {

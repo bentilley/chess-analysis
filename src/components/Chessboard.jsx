@@ -1,12 +1,14 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from "react";
 
-import { ChessPiece } from './ChessPiece';
-import { ChessboardContext } from '../chessboard/context';
-import { Colours } from '../chessboard/reducers';
+import { ChessPiece } from "./ChessPiece";
+import { ChessboardContext } from "../chessboard/context";
+import { Colours } from "../chessboard/reducers";
 
-export const ChessBoard = () => {
+const ChessBoard = () => {
   const { board, actions } = useContext(ChessboardContext);
   const [movingCell, setMovingCell] = useState({});
+
+  const { whiteAttacking, blackAttacking } = board.getAllCellAttackedCounts();
 
   return (
     <div className="chessboard">
@@ -14,7 +16,7 @@ export const ChessBoard = () => {
         return (
           <div className="chessboard__row" key={row}>
             {row.map(cell => {
-              let cellClass = 'chessboard__cell' + ' ' + getColourMod(cell);
+              const cellClass = `chessboard__cell ${getColourMod(cell)}`;
               return (
                 <div
                   className={cellClass}
@@ -35,6 +37,16 @@ export const ChessBoard = () => {
                   }}
                 >
                   {cell.piece ? <ChessPiece piece={cell.piece} /> : null}
+                  <div
+                    className={`chessboard__cell_status ${getAttackedColour(
+                      Colours.White
+                    )(whiteAttacking, cell)}`}
+                  />
+                  <div
+                    className={`chessboard__cell_status ${getAttackedColour(
+                      Colours.Black
+                    )(blackAttacking, cell)}`}
+                  />
                 </div>
               );
             })}
@@ -45,9 +57,28 @@ export const ChessBoard = () => {
   );
 };
 
-const getColourMod = cell => {
+const getColourMod = cell =>
+  ({
+    [Colours.White]: "chessboard--white",
+    [Colours.Black]: "chessboard--black",
+  }[cell.colour]);
+
+const getAttackedColour = colour => (cellAttackedCounts, cell) => {
+  const col = {
+    [Colours.White]: "white",
+    [Colours.Black]: "black",
+  }[colour];
   return {
-    [Colours.White]: 'chessboard--white',
-    [Colours.Black]: 'chessboard--black',
-  }[cell.colour];
+    undefined: `chessboard--${col}-attacked-0`,
+    1: `chessboard--${col}-attacked-1`,
+    2: `chessboard--${col}-attacked-2`,
+    3: `chessboard--${col}-attacked-3`,
+    4: `chessboard--${col}-attacked-4`,
+    5: `chessboard--${col}-attacked-5`,
+    6: `chessboard--${col}-attacked-6`,
+    7: `chessboard--${col}-attacked-7`,
+    8: `chessboard--${col}-attacked-8`,
+  }[cellAttackedCounts[cell.pos]];
 };
+
+export default ChessBoard;
